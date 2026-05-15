@@ -10,6 +10,7 @@ import {
   type VocabItem
 } from "@/lib/vocabulary";
 import { isSpeechSupported, primeVoices, speakKorean, stopSpeaking } from "@/lib/tts";
+import ExampleList from "@/components/ExampleList";
 
 type Mode = "flashcard" | "quiz";
 
@@ -223,6 +224,10 @@ export default function VocabPractice({ category }: { category: VocabCategory })
             ⚠️ Browser Anda tidak mendukung text-to-speech. Coba gunakan Chrome, Edge, atau Safari terbaru.
           </div>
         ) : null}
+
+        <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
+          <ExampleList examples={cfg.usageExamples} ttsSupported={ttsSupported} title="Contoh Kalimat Penggunaan" />
+        </div>
       </section>
 
       <aside style={{ display: "grid", gap: 14 }}>

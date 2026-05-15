@@ -1,3 +1,5 @@
+import type { SentenceExample } from "@/lib/sentences";
+
 export type VocabCategory = "places" | "numbers" | "verbs";
 
 export type VocabItem = {
@@ -11,6 +13,7 @@ export type VocabCategoryConfig = {
   label: string;
   description: string;
   emoji: string;
+  usageExamples: readonly SentenceExample[];
 };
 
 export const VOCAB_CATEGORIES: readonly VocabCategoryConfig[] = [
@@ -18,19 +21,49 @@ export const VOCAB_CATEGORIES: readonly VocabCategoryConfig[] = [
     id: "places",
     label: "Nama Tempat",
     description: "Kosakata tempat dan lokasi sehari-hari",
-    emoji: "🏛️"
+    emoji: "🏛️",
+    usageExamples: [
+      { kind: "statement", korean: "저는 학교에 가요.", indonesian: "Saya pergi ke sekolah." },
+      { kind: "statement", korean: "친구가 카페에 있어요.", indonesian: "Teman ada di kafe." },
+      { kind: "question", korean: "어디에 가요?", indonesian: "Pergi ke mana?", note: "어디 = di mana" },
+      { kind: "question", korean: "병원이 어디에 있어요?", indonesian: "Di mana rumah sakitnya?" },
+      { kind: "positive", korean: "네, 시장에 가요.", indonesian: "Ya, (saya) pergi ke pasar." },
+      { kind: "positive", korean: "네, 학교 근처에 있어요.", indonesian: "Ya, ada di dekat sekolah." },
+      { kind: "negative", korean: "아니요, 병원에 안 가요.", indonesian: "Tidak, (saya) tidak pergi ke rumah sakit." },
+      { kind: "negative", korean: "아니요, 카페에 없어요.", indonesian: "Tidak, tidak ada di kafe." }
+    ]
   },
   {
     id: "numbers",
     label: "Angka",
     description: "Angka Sino-Korean (한자어) 1 sampai 100+",
-    emoji: "🔢"
+    emoji: "🔢",
+    usageExamples: [
+      { kind: "statement", korean: "사과가 천 원이에요.", indonesian: "Apel harganya 1.000 won." },
+      { kind: "statement", korean: "오늘은 십오일이에요.", indonesian: "Hari ini tanggal 15." },
+      { kind: "question", korean: "얼마예요?", indonesian: "Berapa harganya?", note: "얼마 = berapa (harga)" },
+      { kind: "question", korean: "오늘 며칠이에요?", indonesian: "Hari ini tanggal berapa?" },
+      { kind: "positive", korean: "네, 만 원이에요.", indonesian: "Ya, 10.000 won." },
+      { kind: "positive", korean: "네, 십오일이에요.", indonesian: "Ya, tanggal 15." },
+      { kind: "negative", korean: "아니요, 만 원이 아니에요.", indonesian: "Bukan, bukan 10.000 won." },
+      { kind: "negative", korean: "아니요, 십오일이 아니에요.", indonesian: "Bukan, bukan tanggal 15." }
+    ]
   },
   {
     id: "verbs",
     label: "Kata Kerja",
     description: "Kata kerja dasar dalam bentuk infinitif",
-    emoji: "🏃"
+    emoji: "🏃",
+    usageExamples: [
+      { kind: "statement", korean: "한국어를 공부해요.", indonesian: "(Saya) belajar bahasa Korea." },
+      { kind: "statement", korean: "친구를 만나요.", indonesian: "(Saya) bertemu teman." },
+      { kind: "question", korean: "뭐 해요?", indonesian: "Sedang apa?", note: "뭐 = apa" },
+      { kind: "question", korean: "지금 어디에 가요?", indonesian: "Sekarang pergi ke mana?" },
+      { kind: "positive", korean: "네, 공부해요.", indonesian: "Ya, (saya) sedang belajar." },
+      { kind: "positive", korean: "네, 한국어를 공부해요.", indonesian: "Ya, (saya) belajar bahasa Korea." },
+      { kind: "negative", korean: "아니요, 안 공부해요.", indonesian: "Tidak, (saya) tidak belajar.", note: "Negatif: 안 + kata kerja" },
+      { kind: "negative", korean: "아니요, 친구를 안 만나요.", indonesian: "Tidak, (saya) tidak bertemu teman." }
+    ]
   }
 ] as const;
 

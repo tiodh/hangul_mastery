@@ -6,7 +6,9 @@ import { createPrompt, formatRomanHint, getLevelConfig, isCorrectAnswer } from "
 import type { LevelNumber, StoredProgress } from "@/lib/storage";
 import { clearProgress, defaultProgress, loadProgress, saveProgress } from "@/lib/storage";
 import { isSpeechSupported, primeVoices, speakKorean, stopSpeaking } from "@/lib/tts";
+import { HANGUL_GREETINGS } from "@/lib/greetings";
 import LevelPicker from "@/components/LevelPicker";
+import ExampleList from "@/components/ExampleList";
 
 type Feedback =
   | { kind: "idle" }
@@ -234,15 +236,18 @@ export default function Game() {
         />
 
         <div className="card">
-          <div style={{ fontWeight: 800, marginBottom: 6 }}>How scoring works</div>
+          <div style={{ fontWeight: 800, marginBottom: 6 }}>Cara penilaian</div>
           <div className="small">
-            Each time you click <b>Check</b>, it counts as 1 attempt. A correct answer increases your streak and
-            saves progress to your browser.
+            Setiap klik <b>Check</b> dihitung 1 percobaan. Jawaban benar menambah streak dan progres tersimpan otomatis di browser.
           </div>
-          <div className="small" style={{ marginTop: 10 }}>
-            Want real vocabulary instead of random syllables? Tell me your target grade and language (EN/ID/etc),
-            and I can replace the prompts with curated words per level.
-          </div>
+        </div>
+
+        <div className="card">
+          <ExampleList
+            examples={HANGUL_GREETINGS}
+            ttsSupported={ttsSupported}
+            title="Sapaan & Perkenalan Dasar"
+          />
         </div>
       </aside>
     </div>

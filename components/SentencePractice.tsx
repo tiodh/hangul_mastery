@@ -8,6 +8,7 @@ import {
   type SentencePatternId
 } from "@/lib/sentences";
 import { isSpeechSupported, primeVoices, speakKorean, stopSpeaking } from "@/lib/tts";
+import ExampleList from "@/components/ExampleList";
 
 type View = "lesson" | "quiz";
 
@@ -143,30 +144,8 @@ export default function SentencePractice({ pattern: patternId }: { pattern: Sent
               ))}
             </div>
 
-            <div style={{ fontWeight: 800, marginTop: 16, marginBottom: 8 }}>Contoh Kalimat</div>
-            <div style={{ display: "grid", gap: 10 }}>
-              {pattern.examples.map((ex, i) => (
-                <div key={i} className="exampleCard">
-                  <div className="row" style={{ justifyContent: "space-between" }}>
-                    <div className="exampleKorean">{ex.korean}</div>
-                    <button
-                      type="button"
-                      className="btn btnSpeak"
-                      onClick={() => speakKorean(ex.korean)}
-                      disabled={!ttsSupported}
-                      aria-label={`Dengarkan: ${ex.korean}`}
-                    >
-                      🔊
-                    </button>
-                  </div>
-                  <div className="small" style={{ marginTop: 4 }}>{ex.indonesian}</div>
-                  {ex.note ? (
-                    <div className="small" style={{ marginTop: 4, fontStyle: "italic", opacity: 0.85 }}>
-                      💡 {ex.note}
-                    </div>
-                  ) : null}
-                </div>
-              ))}
+            <div style={{ marginTop: 16 }}>
+              <ExampleList examples={pattern.examples} ttsSupported={ttsSupported} />
             </div>
           </>
         ) : (

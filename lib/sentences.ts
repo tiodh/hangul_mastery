@@ -3,12 +3,23 @@ export type SentencePatternId =
   | "ayoeoyo"
   | "eunneun"
   | "iga"
-  | "eulreul";
+  | "eulreul"
+  | "posisi";
+
+export type ExampleKind = "statement" | "question" | "positive" | "negative";
 
 export type SentenceExample = {
   korean: string;
   indonesian: string;
+  kind: ExampleKind;
   note?: string;
+};
+
+export const EXAMPLE_KIND_LABEL: Record<ExampleKind, { label: string; emoji: string }> = {
+  statement: { label: "Kalimat Biasa", emoji: "💬" },
+  question: { label: "Kalimat Tanya", emoji: "❓" },
+  positive: { label: "Jawaban Positif", emoji: "✅" },
+  negative: { label: "Jawaban Negatif", emoji: "❌" }
 };
 
 export type VariantExample = {
@@ -87,10 +98,14 @@ export const SENTENCE_PATTERNS: readonly SentencePattern[] = [
       }
     ],
     examples: [
-      { korean: "저는 학생이에요.", indonesian: "Saya seorang siswa.", note: "학생 berakhir 받침 ㅇ → 이에요" },
-      { korean: "저는 의사예요.", indonesian: "Saya seorang dokter.", note: "의사 berakhir vokal ㅏ → 예요" },
-      { korean: "한국 사람이에요.", indonesian: "Saya orang Korea.", note: "사람 berakhir 받침 ㅁ → 이에요" },
-      { korean: "이름은 민지예요.", indonesian: "Nama saya Minji.", note: "민지 berakhir vokal ㅣ → 예요" }
+      { kind: "statement", korean: "저는 학생이에요.", indonesian: "Saya seorang siswa." },
+      { kind: "statement", korean: "이분은 의사예요.", indonesian: "Orang ini seorang dokter." },
+      { kind: "question", korean: "학생이에요?", indonesian: "Apakah (kamu) seorang siswa?" },
+      { kind: "question", korean: "이름이 뭐예요?", indonesian: "Apa nama (Anda)?" },
+      { kind: "positive", korean: "네, 학생이에요.", indonesian: "Ya, (saya) seorang siswa." },
+      { kind: "positive", korean: "네, 한국 사람이에요.", indonesian: "Ya, (saya) orang Korea." },
+      { kind: "negative", korean: "아니요, 학생이 아니에요.", indonesian: "Bukan, (saya) bukan seorang siswa.", note: "Bentuk negatif: 이/가 아니에요" },
+      { kind: "negative", korean: "아니요, 의사가 아니에요.", indonesian: "Bukan, (saya) bukan dokter." }
     ],
     quiz: [
       {
@@ -175,7 +190,7 @@ export const SENTENCE_PATTERNS: readonly SentencePattern[] = [
     purpose:
       "Akhiran 아요/어요/해요 dipakai di akhir kata kerja atau kata sifat agar kalimat terdengar sopan tapi santai (informal polite). Ini bentuk yang paling sering dipakai dalam percakapan sehari-hari.",
     mechanic:
-      "Cara pakai: (1) Hapus 다 dari bentuk kamus → dapat akar kata (어간). (2) Lihat vokal pada suku kata terakhir akar. (3) Pilih akhiran sesuai aturan di bawah.",
+      "Cara pakai: (1) Hapus 다 dari bentuk kamus → dapat akar kata (어간). (2) Lihat vokal pada suku kata terakhir akar. (3) Pilih akhiran sesuai aturan di bawah. Untuk negatif: tambah 안 di depan kata kerja.",
     variants: [
       {
         badge: "ㅏ / ㅗ",
@@ -214,11 +229,14 @@ export const SENTENCE_PATTERNS: readonly SentencePattern[] = [
       }
     ],
     examples: [
-      { korean: "저는 학교에 가요.", indonesian: "Saya pergi ke sekolah.", note: "가다 → 가요 (vokal ㅏ)" },
-      { korean: "밥을 먹어요.", indonesian: "Saya makan nasi.", note: "먹다 → 먹어요 (vokal ㅓ)" },
-      { korean: "한국어를 공부해요.", indonesian: "Saya belajar bahasa Korea.", note: "공부하다 → 공부해요" },
-      { korean: "친구를 만나요.", indonesian: "Saya bertemu teman.", note: "만나다 → 만나요" },
-      { korean: "물을 마셔요.", indonesian: "Saya minum air.", note: "마시다 → 마셔요" }
+      { kind: "statement", korean: "저는 학교에 가요.", indonesian: "Saya pergi ke sekolah." },
+      { kind: "statement", korean: "한국어를 공부해요.", indonesian: "Saya belajar bahasa Korea." },
+      { kind: "question", korean: "어디에 가요?", indonesian: "Pergi ke mana?" },
+      { kind: "question", korean: "뭐 해요?", indonesian: "Sedang apa?" },
+      { kind: "positive", korean: "네, 학교에 가요.", indonesian: "Ya, (saya) pergi ke sekolah." },
+      { kind: "positive", korean: "네, 한국어를 공부해요.", indonesian: "Ya, (saya) sedang belajar bahasa Korea." },
+      { kind: "negative", korean: "아니요, 학교에 안 가요.", indonesian: "Tidak, (saya) tidak pergi ke sekolah.", note: "Negatif: tambah 안 sebelum kerja" },
+      { kind: "negative", korean: "아니요, 안 먹어요.", indonesian: "Tidak, (saya) tidak makan." }
     ],
     quiz: [
       {
@@ -339,10 +357,14 @@ export const SENTENCE_PATTERNS: readonly SentencePattern[] = [
       }
     ],
     examples: [
-      { korean: "저는 학생이에요.", indonesian: "Saya seorang siswa.", note: "저 berakhir vokal → 는" },
-      { korean: "이름은 민지예요.", indonesian: "Nama saya Minji.", note: "이름 받침 ㅁ → 은" },
-      { korean: "한국어는 재미있어요.", indonesian: "Bahasa Korea itu menyenangkan.", note: "한국어 berakhir vokal → 는" },
-      { korean: "오늘은 월요일이에요.", indonesian: "Hari ini hari Senin.", note: "오늘 받침 ㄹ → 은" }
+      { kind: "statement", korean: "저는 학생이에요.", indonesian: "Saya seorang siswa." },
+      { kind: "statement", korean: "한국어는 재미있어요.", indonesian: "Bahasa Korea itu menyenangkan." },
+      { kind: "question", korean: "이름은 뭐예요?", indonesian: "Apa nama (Anda)?" },
+      { kind: "question", korean: "한국어는 어때요?", indonesian: "Bagaimana bahasa Korea?" },
+      { kind: "positive", korean: "네, 저는 학생이에요.", indonesian: "Ya, saya seorang siswa." },
+      { kind: "positive", korean: "네, 한국어는 재미있어요.", indonesian: "Ya, bahasa Korea menyenangkan." },
+      { kind: "negative", korean: "아니요, 저는 학생이 아니에요.", indonesian: "Tidak, saya bukan seorang siswa." },
+      { kind: "negative", korean: "아니요, 한국어는 어렵지 않아요.", indonesian: "Tidak, bahasa Korea tidak sulit." }
     ],
     quiz: [
       {
@@ -436,10 +458,14 @@ export const SENTENCE_PATTERNS: readonly SentencePattern[] = [
       }
     ],
     examples: [
-      { korean: "친구가 와요.", indonesian: "Teman (saya) datang.", note: "친구 + 가" },
-      { korean: "책이 있어요.", indonesian: "Ada buku.", note: "책 + 이" },
-      { korean: "선생님이 한국 사람이에요.", indonesian: "Guru itu orang Korea.", note: "선생님 + 이" },
-      { korean: "비가 와요.", indonesian: "Hujan turun.", note: "비 + 가" }
+      { kind: "statement", korean: "친구가 와요.", indonesian: "Teman datang." },
+      { kind: "statement", korean: "책이 있어요.", indonesian: "Ada buku." },
+      { kind: "question", korean: "누가 와요?", indonesian: "Siapa yang datang?" },
+      { kind: "question", korean: "뭐가 있어요?", indonesian: "Apa yang ada?" },
+      { kind: "positive", korean: "네, 친구가 와요.", indonesian: "Ya, teman datang." },
+      { kind: "positive", korean: "네, 책이 있어요.", indonesian: "Ya, ada buku." },
+      { kind: "negative", korean: "아니요, 친구가 안 와요.", indonesian: "Tidak, teman tidak datang." },
+      { kind: "negative", korean: "아니요, 책이 없어요.", indonesian: "Tidak, tidak ada buku.", note: "있어요 → 없어요" }
     ],
     quiz: [
       {
@@ -533,11 +559,14 @@ export const SENTENCE_PATTERNS: readonly SentencePattern[] = [
       }
     ],
     examples: [
-      { korean: "밥을 먹어요.", indonesian: "Saya makan nasi.", note: "밥 + 을" },
-      { korean: "물을 마셔요.", indonesian: "Saya minum air.", note: "물 + 을" },
-      { korean: "친구를 만나요.", indonesian: "Saya bertemu teman.", note: "친구 + 를" },
-      { korean: "책을 읽어요.", indonesian: "Saya membaca buku.", note: "책 + 을" },
-      { korean: "영화를 봐요.", indonesian: "Saya menonton film.", note: "영화 + 를" }
+      { kind: "statement", korean: "밥을 먹어요.", indonesian: "(Saya) makan nasi." },
+      { kind: "statement", korean: "영화를 봐요.", indonesian: "(Saya) menonton film." },
+      { kind: "question", korean: "뭐를 먹어요?", indonesian: "Makan apa?" },
+      { kind: "question", korean: "뭐를 봐요?", indonesian: "Menonton apa?" },
+      { kind: "positive", korean: "네, 밥을 먹어요.", indonesian: "Ya, (saya) makan nasi." },
+      { kind: "positive", korean: "네, 영화를 봐요.", indonesian: "Ya, (saya) menonton film." },
+      { kind: "negative", korean: "아니요, 밥을 안 먹어요.", indonesian: "Tidak, (saya) tidak makan nasi." },
+      { kind: "negative", korean: "아니요, 영화를 안 봐요.", indonesian: "Tidak, (saya) tidak menonton film." }
     ],
     quiz: [
       {
@@ -602,6 +631,136 @@ export const SENTENCE_PATTERNS: readonly SentencePattern[] = [
         fullSentence: "음악을 들어요.",
         fullMeaning: "(Saya) mendengarkan musik.",
         explanation: "음악 berakhir 받침 ㄱ → 을"
+      }
+    ]
+  },
+  {
+    id: "posisi",
+    label: "Kata Posisi (앞/뒤/안/위)",
+    emoji: "🧭",
+    description: "Kata posisi: depan, belakang, samping, dalam, atas, bawah, dll.",
+    purpose:
+      "Kata posisi dipakai untuk menjelaskan letak sebuah benda atau orang relatif terhadap benda lain. Misal 'di atas meja', 'di dalam tas', 'di depan rumah'. Sangat berguna untuk percakapan sehari-hari dan deskripsi.",
+    mechanic:
+      "Struktur dasar: [Benda A] + 이/가 + [Benda B] + [Posisi] + 에 + 있어요/없어요. Artinya: 'Benda A ada/tidak ada di [posisi] dari Benda B'. Partikel 에 selalu menempel pada kata posisi.",
+    variants: [
+      {
+        badge: "Datar",
+        title: "Posisi horizontal: depan, belakang, samping",
+        rule: "→ relatif arah",
+        tone: "konsonan",
+        examples: [
+          { word: "앞", meaning: "depan", detail: "baca: ap", result: "집 앞에 (di depan rumah)" },
+          { word: "뒤", meaning: "belakang", detail: "baca: dwi", result: "집 뒤에 (di belakang rumah)" },
+          { word: "옆", meaning: "samping", detail: "baca: yeop", result: "집 옆에 (di samping rumah)" }
+        ]
+      },
+      {
+        badge: "Vertikal",
+        title: "Posisi atas-bawah",
+        rule: "→ relatif tinggi",
+        tone: "vokal",
+        examples: [
+          { word: "위", meaning: "atas", detail: "baca: wi", result: "책상 위에 (di atas meja)" },
+          { word: "아래", meaning: "bawah", detail: "baca: arae", result: "책상 아래에 (di bawah meja)" },
+          { word: "밑", meaning: "bawah (persis)", detail: "baca: mit", result: "책상 밑에 (persis di bawah meja)" }
+        ]
+      },
+      {
+        badge: "Ruang",
+        title: "Dalam / Luar / Antara / Dekat",
+        rule: "→ relatif ruang & jarak",
+        tone: "khusus",
+        examples: [
+          { word: "안", meaning: "dalam", detail: "baca: an", result: "가방 안에 (di dalam tas)" },
+          { word: "밖", meaning: "luar", detail: "baca: bakk", result: "집 밖에 (di luar rumah)" },
+          { word: "사이", meaning: "antara", detail: "baca: sai", result: "A와 B 사이에 (antara A dan B)" },
+          { word: "근처", meaning: "dekat/sekitar", detail: "baca: geuncheo", result: "학교 근처에 (dekat sekolah)" }
+        ]
+      }
+    ],
+    examples: [
+      { kind: "statement", korean: "책이 책상 위에 있어요.", indonesian: "Buku ada di atas meja." },
+      { kind: "statement", korean: "고양이가 의자 밑에 있어요.", indonesian: "Kucing ada di bawah kursi." },
+      { kind: "question", korean: "책이 어디에 있어요?", indonesian: "Di mana bukunya?", note: "어디에 = di mana" },
+      { kind: "question", korean: "화장실이 어디에 있어요?", indonesian: "Di mana toiletnya?" },
+      { kind: "positive", korean: "네, 책상 위에 있어요.", indonesian: "Ya, ada di atas meja." },
+      { kind: "positive", korean: "네, 학교 근처에 있어요.", indonesian: "Ya, ada di dekat sekolah." },
+      { kind: "negative", korean: "아니요, 책상 위에 없어요.", indonesian: "Tidak, tidak ada di atas meja.", note: "있어요 → 없어요" },
+      { kind: "negative", korean: "아니요, 가방 안에 없어요.", indonesian: "Tidak, tidak ada di dalam tas." }
+    ],
+    quiz: [
+      {
+        prompt: "buku ada di atas meja",
+        promptMeaning: "책이 책상 ___에 있어요",
+        options: ["위", "아래", "안"],
+        correct: "위",
+        fullSentence: "책이 책상 위에 있어요.",
+        fullMeaning: "Buku ada di atas meja.",
+        explanation: "위 = atas. 책상 위에 = di atas meja"
+      },
+      {
+        prompt: "kucing di bawah kursi",
+        promptMeaning: "고양이가 의자 ___에 있어요",
+        options: ["위", "밑", "옆"],
+        correct: "밑",
+        fullSentence: "고양이가 의자 밑에 있어요.",
+        fullMeaning: "Kucing ada di bawah kursi.",
+        explanation: "밑 = persis di bawah (lebih spesifik dari 아래)"
+      },
+      {
+        prompt: "di dalam tas",
+        promptMeaning: "가방 ___에",
+        options: ["안", "밖", "위"],
+        correct: "안",
+        fullSentence: "가방 안에 책이 있어요.",
+        fullMeaning: "Di dalam tas ada buku.",
+        explanation: "안 = dalam (interior)"
+      },
+      {
+        prompt: "di depan rumah",
+        promptMeaning: "집 ___에",
+        options: ["앞", "뒤", "옆"],
+        correct: "앞",
+        fullSentence: "집 앞에 차가 있어요.",
+        fullMeaning: "Di depan rumah ada mobil.",
+        explanation: "앞 = depan"
+      },
+      {
+        prompt: "di belakang sekolah",
+        promptMeaning: "학교 ___에",
+        options: ["앞", "뒤", "안"],
+        correct: "뒤",
+        fullSentence: "학교 뒤에 공원이 있어요.",
+        fullMeaning: "Di belakang sekolah ada taman.",
+        explanation: "뒤 = belakang"
+      },
+      {
+        prompt: "di samping bank",
+        promptMeaning: "은행 ___에",
+        options: ["위", "옆", "근처"],
+        correct: "옆",
+        fullSentence: "은행 옆에 카페가 있어요.",
+        fullMeaning: "Di samping bank ada kafe.",
+        explanation: "옆 = samping (langsung berdampingan)"
+      },
+      {
+        prompt: "di dekat sekolah",
+        promptMeaning: "학교 ___에",
+        options: ["옆", "근처", "안"],
+        correct: "근처",
+        fullSentence: "학교 근처에 식당이 있어요.",
+        fullMeaning: "Di dekat sekolah ada restoran.",
+        explanation: "근처 = sekitar/dekat (area umum, tidak harus berdampingan)"
+      },
+      {
+        prompt: "antara A dan B",
+        promptMeaning: "A와 B ___에",
+        options: ["사이", "안", "옆"],
+        correct: "사이",
+        fullSentence: "은행과 카페 사이에 있어요.",
+        fullMeaning: "Ada di antara bank dan kafe.",
+        explanation: "사이 = antara (perlu dua acuan, dihubungkan dengan 와/과)"
       }
     ]
   }
