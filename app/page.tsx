@@ -1,4 +1,4 @@
-import Game from "@/components/Game";
+import AppShell from "@/components/AppShell";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Home() {
@@ -7,15 +7,15 @@ export default function Home() {
     <main className="container">
       <div className="header">
         <div>
-          <h1 className="title">Hangul Learning Game</h1>
+          <h1 className="title">Hangul Mastery</h1>
           <p className="subtitle">
-            A simple practice game: you see Hangul, then type how to say it (romanization).
-            Your level + score is saved in your browser so you can continue later.
+            Latihan membaca Hangul dan menghafal kosakata Korea–Indonesia
+            (nama tempat, angka, kata kerja) — lengkap dengan pelafalan suara.
           </p>
         </div>
         <ThemeToggle />
       </div>
-      <Game />
+      <AppShell />
       <footer className="small" style={{ marginTop: 18, textAlign: "center" }}>
         © {year} TeamLab. All rights reserved.
       </footer>
