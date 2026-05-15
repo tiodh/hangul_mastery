@@ -1,6 +1,6 @@
 import type { SentenceExample } from "@/lib/sentences";
 
-export type VocabCategory = "places" | "numbers" | "verbs";
+export type VocabCategory = "expressions" | "places" | "numbers" | "verbs";
 
 export type VocabItem = {
   hangul: string;
@@ -17,6 +17,22 @@ export type VocabCategoryConfig = {
 };
 
 export const VOCAB_CATEGORIES: readonly VocabCategoryConfig[] = [
+  {
+    id: "expressions",
+    label: "Ungkapan Umum",
+    description: "Frasa sehari-hari: terima kasih, maaf, permisi, sapaan, dll.",
+    emoji: "🙏",
+    usageExamples: [
+      { kind: "statement", korean: "만나서 반갑습니다.", roman: "mannaseo bangapseumnida.", indonesian: "Senang bertemu Anda." },
+      { kind: "statement", korean: "잘 부탁드립니다.", roman: "jal butakdeurimnida.", indonesian: "Mohon bantuannya.", note: "Sering diucapkan setelah perkenalan." },
+      { kind: "question", korean: "이거 한국어로 뭐예요?", roman: "igeo hangugeoro mwoyeyo?", indonesian: "Apa ini dalam bahasa Korea?" },
+      { kind: "question", korean: "도와주실 수 있어요?", roman: "dowajusil su isseoyo?", indonesian: "Bisakah Anda menolong saya?" },
+      { kind: "positive", korean: "네, 알겠어요. 감사합니다.", roman: "ne, algesseoyo. gamsahamnida.", indonesian: "Ya, saya mengerti. Terima kasih." },
+      { kind: "positive", korean: "네, 괜찮아요.", roman: "ne, gwaenchanayo.", indonesian: "Ya, tidak apa-apa." },
+      { kind: "negative", korean: "아니요, 죄송해요. 잘 몰라요.", roman: "aniyo, joesonghaeyo. jal mollayo.", indonesian: "Tidak, maaf. Saya kurang tahu." },
+      { kind: "negative", korean: "아니요, 괜찮아요. 감사합니다.", roman: "aniyo, gwaenchanayo. gamsahamnida.", indonesian: "Tidak (perlu), tidak apa-apa. Terima kasih.", note: "Bisa dipakai menolak tawaran dengan sopan." }
+    ]
+  },
   {
     id: "places",
     label: "Nama Tempat",
@@ -65,6 +81,35 @@ export const VOCAB_CATEGORIES: readonly VocabCategoryConfig[] = [
       { kind: "negative", korean: "아니요, 친구를 안 만나요.", roman: "aniyo, chingureul an mannayo.", indonesian: "Tidak, (saya) tidak bertemu teman." }
     ]
   }
+] as const;
+
+const EXPRESSIONS: readonly VocabItem[] = [
+  { hangul: "안녕하세요", roman: "annyeonghaseyo", indonesian: "halo / selamat (pagi/siang/sore/malam)" },
+  { hangul: "안녕히 가세요", roman: "annyeonghi gaseyo", indonesian: "selamat jalan" },
+  { hangul: "안녕히 계세요", roman: "annyeonghi gyeseyo", indonesian: "selamat tinggal" },
+  { hangul: "만나서 반갑습니다", roman: "mannaseo bangapseumnida", indonesian: "senang bertemu" },
+  { hangul: "오랜만이에요", roman: "oraenmanieyo", indonesian: "lama tidak bertemu" },
+  { hangul: "감사합니다", roman: "gamsahamnida", indonesian: "terima kasih (formal)" },
+  { hangul: "고맙습니다", roman: "gomapseumnida", indonesian: "terima kasih" },
+  { hangul: "고마워요", roman: "gomawoyo", indonesian: "terima kasih (kasual)" },
+  { hangul: "천만에요", roman: "cheonmaneyo", indonesian: "sama-sama" },
+  { hangul: "죄송합니다", roman: "joesonghamnida", indonesian: "maaf (formal)" },
+  { hangul: "미안해요", roman: "mianhaeyo", indonesian: "maaf (kasual)" },
+  { hangul: "실례합니다", roman: "sillyehamnida", indonesian: "permisi" },
+  { hangul: "잠시만요", roman: "jamsimanyo", indonesian: "sebentar / tunggu sebentar" },
+  { hangul: "네", roman: "ne", indonesian: "ya" },
+  { hangul: "아니요", roman: "aniyo", indonesian: "tidak" },
+  { hangul: "괜찮아요", roman: "gwaenchanayo", indonesian: "tidak apa-apa / baik-baik saja" },
+  { hangul: "알겠어요", roman: "algesseoyo", indonesian: "saya mengerti" },
+  { hangul: "몰라요", roman: "mollayo", indonesian: "saya tidak tahu" },
+  { hangul: "도와주세요", roman: "dowajuseyo", indonesian: "tolong saya" },
+  { hangul: "다시 한번 말해 주세요", roman: "dasi hanbeon malhae juseyo", indonesian: "tolong ulangi sekali lagi" },
+  { hangul: "천천히 말해 주세요", roman: "cheoncheonhi malhae juseyo", indonesian: "tolong bicara perlahan" },
+  { hangul: "잘 부탁드립니다", roman: "jal butakdeurimnida", indonesian: "mohon bantuannya" },
+  { hangul: "잘 먹겠습니다", roman: "jal meokgesseumnida", indonesian: "selamat makan (sebelum makan)" },
+  { hangul: "잘 먹었습니다", roman: "jal meogeosseumnida", indonesian: "terima kasih atas makanannya (sesudah makan)" },
+  { hangul: "잘 자요", roman: "jal jayo", indonesian: "selamat tidur" },
+  { hangul: "화이팅", roman: "hwaiting", indonesian: "semangat" }
 ] as const;
 
 const PLACES: readonly VocabItem[] = [
@@ -170,6 +215,8 @@ const VERBS: readonly VocabItem[] = [
 
 export function getVocabList(category: VocabCategory): readonly VocabItem[] {
   switch (category) {
+    case "expressions":
+      return EXPRESSIONS;
     case "places":
       return PLACES;
     case "numbers":
