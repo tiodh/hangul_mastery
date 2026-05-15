@@ -43,6 +43,7 @@ export default function ExampleList({
                         🔊
                       </button>
                     </div>
+                    <div className="romanLine">[{ex.roman}]</div>
                     <div className="small" style={{ marginTop: 4 }}>{ex.indonesian}</div>
                     {ex.note ? (
                       <div className="small" style={{ marginTop: 4, fontStyle: "italic", opacity: 0.85 }}>

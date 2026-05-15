@@ -122,10 +122,14 @@ export default function SentencePractice({ pattern: patternId }: { pattern: Sent
                         <div className="row" style={{ justifyContent: "space-between" }}>
                           <div>
                             <span className="variantWord">{ex.word}</span>
+                            <span className="romanInline"> [{ex.wordRoman}]</span>
                             <span className="small"> ({ex.meaning}) — {ex.detail}</span>
                           </div>
                           <div className="row" style={{ gap: 6 }}>
-                            <span className="variantResult">{ex.result}</span>
+                            <div style={{ textAlign: "right" }}>
+                              <div className="variantResult">{ex.result}</div>
+                              <div className="romanLine">[{ex.resultRoman}]</div>
+                            </div>
                             <button
                               type="button"
                               className="btn btnSpeak btnSpeakMini"
@@ -156,6 +160,9 @@ export default function SentencePractice({ pattern: patternId }: { pattern: Sent
 
             <div className="quizPrompt">
               <div className="hangul" style={{ fontSize: 48, margin: 0 }}>{question.prompt}</div>
+              {question.promptRoman ? (
+                <div className="romanLine" style={{ fontSize: 14 }}>[{question.promptRoman}]</div>
+              ) : null}
               <div className="small">arti: <b>{question.promptMeaning}</b></div>
             </div>
 
@@ -189,7 +196,10 @@ export default function SentencePractice({ pattern: patternId }: { pattern: Sent
                 </div>
                 <div className="small" style={{ marginTop: 6 }}>{question.explanation}</div>
                 <div style={{ marginTop: 10 }} className="row">
-                  <div className="exampleKorean" style={{ fontSize: 22 }}>{question.fullSentence}</div>
+                  <div>
+                    <div className="exampleKorean" style={{ fontSize: 22 }}>{question.fullSentence}</div>
+                    <div className="romanLine">[{question.fullSentenceRoman}]</div>
+                  </div>
                   <button
                     type="button"
                     className="btn btnSpeak"

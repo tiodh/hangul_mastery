@@ -427,3 +427,27 @@ input[type="text"]:focus{
   background: rgba(239,68,68,.16);
   border-color: rgba(239,68,68,.45);
 }
+
+.romanLine{
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 500;
+  color: rgba(255,255,255,.55);
+  margin-top: 2px;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="light"] .romanLine{
+  color: rgba(10,10,14,.55);
+}
+
+.romanInline{
+  font-size: 14px;
+  font-style: italic;
+  color: rgba(255,255,255,.55);
+  font-weight: 500;
+}
+
+[data-theme="light"] .romanInline{
+  color: rgba(10,10,14,.55);
+}
