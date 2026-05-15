@@ -451,3 +451,14 @@ input[type="text"]:focus{
 [data-theme="light"] .romanInline{
   color: rgba(10,10,14,.55);
 }
+
+.tipsInline{
+  margin-top: 18px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: rgba(0,0,0,.10);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}

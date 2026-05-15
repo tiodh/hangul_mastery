@@ -75,8 +75,7 @@ export default function VocabPractice({ category }: { category: VocabCategory })
   const accuracy = stats.attempts ? Math.round((stats.correct / stats.attempts) * 100) : 0;
 
   return (
-    <div className="grid">
-      <section className="card">
+    <section className="card">
         <div className="row" style={{ justifyContent: "space-between" }}>
           <div className="row">
             <span className="tag">
@@ -228,38 +227,16 @@ export default function VocabPractice({ category }: { category: VocabCategory })
         <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
           <ExampleList examples={cfg.usageExamples} ttsSupported={ttsSupported} title="Contoh Kalimat Penggunaan" />
         </div>
-      </section>
-
-      <aside style={{ display: "grid", gap: 14 }}>
-        <div className="card">
-          <div style={{ fontWeight: 800, marginBottom: 6 }}>Tips Belajar</div>
-          <ul className="small" style={{ paddingLeft: 18, margin: 0, lineHeight: 1.6 }}>
-            <li>Klik <b>🔊 Dengarkan</b> beberapa kali sambil mengucap ulang.</li>
-            <li>Mode <b>Kartu</b>: tebak artinya dulu, baru buka jawaban.</li>
-            <li>Mode <b>Kuis</b>: ketik arti dalam Bahasa Indonesia, lalu tekan Enter.</li>
-            <li>Jika kata punya beberapa arti (dipisah <code>/</code>), salah satu sudah dianggap benar.</li>
-          </ul>
-        </div>
 
         {mode === "quiz" ? (
-          <div className="card">
-            <div style={{ fontWeight: 800, marginBottom: 6 }}>Statistik Sesi</div>
-            <div className="row">
-              <span className="tag">
-                <span style={{ fontWeight: 800 }}>Benar</span>
-                <span>{stats.correct}</span>
-              </span>
-              <span className="tag">
-                <span style={{ fontWeight: 800 }}>Percobaan</span>
-                <span>{stats.attempts}</span>
-              </span>
-            </div>
-            <div className="small" style={{ marginTop: 10 }}>
-              Statistik hanya untuk sesi ini, tidak disimpan.
-            </div>
+          <div className="tipsInline">
+            <b>📊 Sesi:</b> {stats.correct}/{stats.attempts} benar ({accuracy}%) — statistik tidak disimpan antar sesi.
           </div>
-        ) : null}
-      </aside>
-    </div>
+        ) : (
+          <div className="tipsInline">
+            <b>💡 Tips:</b> Klik 🔊 sambil mengucap ulang. Mode <b>Kartu</b> untuk tebak arti, mode <b>Kuis</b> untuk ketik arti dalam Bahasa Indonesia (Enter = cek).
+          </div>
+        )}
+      </section>
   );
 }

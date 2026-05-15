@@ -56,38 +56,43 @@ export default function SentencePractice({ pattern: patternId }: { pattern: Sent
   const accuracy = stats.attempts ? Math.round((stats.correct / stats.attempts) * 100) : 0;
 
   return (
-    <div className="grid">
-      <section className="card">
-        <div className="row" style={{ justifyContent: "space-between" }}>
-          <div className="row">
-            <span className="tag">
-              <span style={{ fontWeight: 800 }}>{pattern.emoji}</span>
-              <span>{pattern.label}</span>
-            </span>
-            {view === "quiz" ? (
+    <section className="card">
+      <div className="row" style={{ justifyContent: "space-between" }}>
+        <div className="row">
+          <span className="tag">
+            <span style={{ fontWeight: 800 }}>{pattern.emoji}</span>
+            <span>{pattern.label}</span>
+          </span>
+          {view === "quiz" ? (
+            <>
               <span className="tag">
                 <span style={{ fontWeight: 800 }}>Akurasi</span>
                 <span>{accuracy}%</span>
               </span>
-            ) : null}
-          </div>
-          <div className="row">
-            <button
-              type="button"
-              className={`btn ${view === "lesson" ? "btnPrimary" : ""}`}
-              onClick={() => setView("lesson")}
-            >
-              Penjelasan
-            </button>
-            <button
-              type="button"
-              className={`btn ${view === "quiz" ? "btnPrimary" : ""}`}
-              onClick={() => setView("quiz")}
-            >
-              Latihan
-            </button>
-          </div>
+              <span className="tag">
+                <span style={{ fontWeight: 800 }}>Benar</span>
+                <span>{stats.correct}/{stats.attempts}</span>
+              </span>
+            </>
+          ) : null}
         </div>
+        <div className="row">
+          <button
+            type="button"
+            className={`btn ${view === "lesson" ? "btnPrimary" : ""}`}
+            onClick={() => setView("lesson")}
+          >
+            Penjelasan
+          </button>
+          <button
+            type="button"
+            className={`btn ${view === "quiz" ? "btnPrimary" : ""}`}
+            onClick={() => setView("quiz")}
+          >
+            Latihan
+          </button>
+        </div>
+      </div>
 
         <div className="small" style={{ marginTop: 10 }}>{pattern.description}</div>
 
@@ -225,35 +230,10 @@ export default function SentencePractice({ pattern: patternId }: { pattern: Sent
             ⚠️ Browser tidak mendukung TTS. Gunakan Chrome, Edge, atau Safari terbaru.
           </div>
         ) : null}
-      </section>
 
-      <aside style={{ display: "grid", gap: 14 }}>
-        <div className="card">
-          <div style={{ fontWeight: 800, marginBottom: 6 }}>Cara Belajar</div>
-          <ol className="small" style={{ paddingLeft: 18, margin: 0, lineHeight: 1.6 }}>
-            <li>Baca <b>Penjelasan</b> untuk pahami aturan & 받침 (konsonan akhir).</li>
-            <li>Klik 🔊 di tiap contoh untuk dengar pelafalannya.</li>
-            <li>Pindah ke <b>Latihan</b> dan pilih akhiran yang tepat.</li>
-            <li>Setelah jawab, dengarkan kalimat lengkap untuk merekat ingatan.</li>
-          </ol>
-        </div>
-
-        {view === "quiz" ? (
-          <div className="card">
-            <div style={{ fontWeight: 800, marginBottom: 6 }}>Statistik Sesi</div>
-            <div className="row">
-              <span className="tag">
-                <span style={{ fontWeight: 800 }}>Benar</span>
-                <span>{stats.correct}</span>
-              </span>
-              <span className="tag">
-                <span style={{ fontWeight: 800 }}>Percobaan</span>
-                <span>{stats.attempts}</span>
-              </span>
-            </div>
-          </div>
-        ) : null}
-      </aside>
-    </div>
+      <div className="tipsInline">
+        <b>💡 Tips:</b> Baca <b>Penjelasan</b> & klik 🔊 di tiap contoh untuk mendengar pelafalan, lalu coba <b>Latihan</b>.
+      </div>
+    </section>
   );
 }
