@@ -311,3 +311,79 @@ input[type="text"]:focus{
   font-weight: 800;
   padding: 12px 18px;
 }
+
+.variantCard{
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,.10);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.variantCard-konsonan{
+  border-left: 4px solid rgba(124,58,237,.85);
+}
+
+.variantCard-vokal{
+  border-left: 4px solid rgba(34,197,94,.85);
+}
+
+.variantCard-khusus{
+  border-left: 4px solid rgba(234,179,8,.85);
+}
+
+.variantBadge{
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.variantBadge-konsonan{
+  background: rgba(124,58,237,.20);
+  color: var(--text);
+  border: 1px solid rgba(124,58,237,.45);
+}
+
+.variantBadge-vokal{
+  background: rgba(34,197,94,.18);
+  color: var(--text);
+  border: 1px solid rgba(34,197,94,.45);
+}
+
+.variantBadge-khusus{
+  background: rgba(234,179,8,.18);
+  color: var(--text);
+  border: 1px solid rgba(234,179,8,.45);
+}
+
+.variantRule{
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.variantExample{
+  background: rgba(0,0,0,.10);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.variantWord{
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.variantResult{
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.btnSpeakMini{
+  padding: 4px 8px;
+  font-size: 14px;
+}

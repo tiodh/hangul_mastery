@@ -93,12 +93,54 @@ export default function SentencePractice({ pattern: patternId }: { pattern: Sent
         {view === "lesson" ? (
           <>
             <div className="feedback" style={{ marginTop: 14 }}>
-              <div style={{ fontWeight: 800, marginBottom: 6 }}>Aturan</div>
-              <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.6 }}>
-                {pattern.rule.map((r, i) => (
-                  <li key={i}>{r}</li>
-                ))}
-              </ul>
+              <div style={{ fontWeight: 800, marginBottom: 6 }}>📌 Maksudnya</div>
+              <div style={{ lineHeight: 1.6 }}>{pattern.purpose}</div>
+            </div>
+
+            {pattern.mechanic ? (
+              <div className="feedback" style={{ marginTop: 10 }}>
+                <div style={{ fontWeight: 800, marginBottom: 6 }}>🧭 Cara Pakai</div>
+                <div className="small" style={{ lineHeight: 1.6 }}>{pattern.mechanic}</div>
+              </div>
+            ) : null}
+
+            <div style={{ fontWeight: 800, marginTop: 16, marginBottom: 8 }}>
+              Aturan & Contoh Konkret
+            </div>
+            <div style={{ display: "grid", gap: 12 }}>
+              {pattern.variants.map((v, i) => (
+                <div key={i} className={`variantCard variantCard-${v.tone}`}>
+                  <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
+                    <span className={`variantBadge variantBadge-${v.tone}`}>{v.badge}</span>
+                    <span className="variantRule">{v.rule}</span>
+                  </div>
+                  <div style={{ fontWeight: 700, marginBottom: 8 }}>{v.title}</div>
+                  <div style={{ display: "grid", gap: 6 }}>
+                    {v.examples.map((ex, j) => (
+                      <div key={j} className="variantExample">
+                        <div className="row" style={{ justifyContent: "space-between" }}>
+                          <div>
+                            <span className="variantWord">{ex.word}</span>
+                            <span className="small"> ({ex.meaning}) — {ex.detail}</span>
+                          </div>
+                          <div className="row" style={{ gap: 6 }}>
+                            <span className="variantResult">{ex.result}</span>
+                            <button
+                              type="button"
+                              className="btn btnSpeak btnSpeakMini"
+                              onClick={() => speakKorean(ex.result)}
+                              disabled={!ttsSupported}
+                              aria-label={`Dengarkan: ${ex.result}`}
+                            >
+                              🔊
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div style={{ fontWeight: 800, marginTop: 16, marginBottom: 8 }}>Contoh Kalimat</div>
