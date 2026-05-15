@@ -1,6 +1,12 @@
 import type { SentenceExample } from "@/lib/sentences";
 
-export type VocabCategory = "expressions" | "places" | "numbers" | "verbs";
+export type VocabCategory =
+  | "expressions"
+  | "days"
+  | "time"
+  | "places"
+  | "numbers"
+  | "verbs";
 
 export type VocabItem = {
   hangul: string;
@@ -31,6 +37,38 @@ export const VOCAB_CATEGORIES: readonly VocabCategoryConfig[] = [
       { kind: "positive", korean: "네, 괜찮아요.", roman: "ne, gwaenchanayo.", indonesian: "Ya, tidak apa-apa." },
       { kind: "negative", korean: "아니요, 죄송해요. 잘 몰라요.", roman: "aniyo, joesonghaeyo. jal mollayo.", indonesian: "Tidak, maaf. Saya kurang tahu." },
       { kind: "negative", korean: "아니요, 괜찮아요. 감사합니다.", roman: "aniyo, gwaenchanayo. gamsahamnida.", indonesian: "Tidak (perlu), tidak apa-apa. Terima kasih.", note: "Bisa dipakai menolak tawaran dengan sopan." }
+    ]
+  },
+  {
+    id: "days",
+    label: "Hari",
+    description: "Nama hari, akhir pekan, dan kata waktu relatif (kemarin, hari ini, besok)",
+    emoji: "📅",
+    usageExamples: [
+      { kind: "statement", korean: "오늘은 월요일이에요.", roman: "oneureun woryoiri-eyo.", indonesian: "Hari ini hari Senin.", note: "Memakai 오늘 (hari ini) + 월요일 (Senin)." },
+      { kind: "statement", korean: "내일 학교에 가요.", roman: "naeil hakgyoe gayo.", indonesian: "Besok (saya) pergi ke sekolah.", note: "내일 = besok" },
+      { kind: "question", korean: "오늘이 무슨 요일이에요?", roman: "oneuri museun yoiri-eyo?", indonesian: "Hari ini hari apa?", note: "요일 = hari (dalam minggu)" },
+      { kind: "question", korean: "주말에 뭐 해요?", roman: "jumare mwo haeyo?", indonesian: "Akhir pekan ngapain?", note: "주말 = akhir pekan" },
+      { kind: "positive", korean: "네, 어제 만났어요.", roman: "ne, eoje mannasseoyo.", indonesian: "Ya, (kami) bertemu kemarin.", note: "어제 = kemarin" },
+      { kind: "positive", korean: "네, 매일 운동해요.", roman: "ne, maeil undonghaeyo.", indonesian: "Ya, (saya) berolahraga setiap hari.", note: "매일 = setiap hari" },
+      { kind: "negative", korean: "아니요, 내일 안 가요.", roman: "aniyo, naeil an gayo.", indonesian: "Tidak, (saya) tidak pergi besok." },
+      { kind: "negative", korean: "아니요, 토요일이 아니에요.", roman: "aniyo, toyoiri anieyo.", indonesian: "Bukan, hari ini bukan Sabtu." }
+    ]
+  },
+  {
+    id: "time",
+    label: "Waktu",
+    description: "Bagian hari, jam, dan kata pengatur waktu (sekarang, nanti, segera)",
+    emoji: "🕐",
+    usageExamples: [
+      { kind: "statement", korean: "지금 오후 두 시예요.", roman: "jigeum ohu du siyeyo.", indonesian: "Sekarang pukul 2 sore.", note: "지금 (sekarang) + 오후 (sore) + 시 (jam)" },
+      { kind: "statement", korean: "아침에 커피를 마셔요.", roman: "achime keopireul masyeoyo.", indonesian: "Pagi hari (saya) minum kopi.", note: "아침 = pagi" },
+      { kind: "question", korean: "지금 몇 시예요?", roman: "jigeum myeot siyeyo?", indonesian: "Sekarang jam berapa?", note: "몇 시 = jam berapa" },
+      { kind: "question", korean: "언제 시간이 있어요?", roman: "eonje sigani isseoyo?", indonesian: "Kapan ada waktu (luang)?", note: "시간 = waktu" },
+      { kind: "positive", korean: "네, 빨리 갈게요.", roman: "ne, ppalli galgeyo.", indonesian: "Ya, (saya) akan segera pergi.", note: "빨리 = cepat" },
+      { kind: "positive", korean: "네, 저녁에 만나요.", roman: "ne, jeonyeoge mannayo.", indonesian: "Ya, mari bertemu di malam hari.", note: "저녁 = malam/petang" },
+      { kind: "negative", korean: "아니요, 시간이 없어요.", roman: "aniyo, sigani eopseoyo.", indonesian: "Tidak, (saya) tidak ada waktu." },
+      { kind: "negative", korean: "아니요, 천천히 가요.", roman: "aniyo, cheoncheonhi gayo.", indonesian: "Tidak (perlu buru-buru), (saya) jalan pelan saja.", note: "천천히 = perlahan" }
     ]
   },
   {
@@ -110,6 +148,63 @@ const EXPRESSIONS: readonly VocabItem[] = [
   { hangul: "잘 먹었습니다", roman: "jal meogeosseumnida", indonesian: "terima kasih atas makanannya (sesudah makan)" },
   { hangul: "잘 자요", roman: "jal jayo", indonesian: "selamat tidur" },
   { hangul: "화이팅", roman: "hwaiting", indonesian: "semangat" }
+] as const;
+
+const DAYS: readonly VocabItem[] = [
+  { hangul: "월요일", roman: "woryoil", indonesian: "Senin" },
+  { hangul: "화요일", roman: "hwayoil", indonesian: "Selasa" },
+  { hangul: "수요일", roman: "suyoil", indonesian: "Rabu" },
+  { hangul: "목요일", roman: "mogyoil", indonesian: "Kamis" },
+  { hangul: "금요일", roman: "geumyoil", indonesian: "Jumat" },
+  { hangul: "토요일", roman: "toyoil", indonesian: "Sabtu" },
+  { hangul: "일요일", roman: "iryoil", indonesian: "Minggu" },
+  { hangul: "요일", roman: "yoil", indonesian: "hari (dalam minggu)" },
+  { hangul: "주말", roman: "jumal", indonesian: "akhir pekan" },
+  { hangul: "평일", roman: "pyeongil", indonesian: "hari kerja / hari biasa" },
+  { hangul: "오늘", roman: "oneul", indonesian: "hari ini" },
+  { hangul: "어제", roman: "eoje", indonesian: "kemarin" },
+  { hangul: "내일", roman: "naeil", indonesian: "besok" },
+  { hangul: "모레", roman: "more", indonesian: "lusa" },
+  { hangul: "그저께", roman: "geujeokke", indonesian: "kemarin lusa" },
+  { hangul: "매일", roman: "maeil", indonesian: "setiap hari" },
+  { hangul: "일주일", roman: "iljuil", indonesian: "satu minggu" },
+  { hangul: "이번 주", roman: "ibeon ju", indonesian: "minggu ini" },
+  { hangul: "지난 주", roman: "jinan ju", indonesian: "minggu lalu" },
+  { hangul: "다음 주", roman: "daeum ju", indonesian: "minggu depan" },
+  { hangul: "이번 달", roman: "ibeon dal", indonesian: "bulan ini" },
+  { hangul: "지난 달", roman: "jinan dal", indonesian: "bulan lalu" },
+  { hangul: "다음 달", roman: "daeum dal", indonesian: "bulan depan" },
+  { hangul: "올해", roman: "olhae", indonesian: "tahun ini" },
+  { hangul: "작년", roman: "jangnyeon", indonesian: "tahun lalu" },
+  { hangul: "내년", roman: "naenyeon", indonesian: "tahun depan" }
+] as const;
+
+const TIMES: readonly VocabItem[] = [
+  { hangul: "시간", roman: "sigan", indonesian: "waktu / jam (durasi)" },
+  { hangul: "시", roman: "si", indonesian: "jam (titik waktu)" },
+  { hangul: "분", roman: "bun", indonesian: "menit" },
+  { hangul: "초", roman: "cho", indonesian: "detik" },
+  { hangul: "시계", roman: "sigye", indonesian: "jam (alat)" },
+  { hangul: "오전", roman: "ojeon", indonesian: "pagi (AM, sebelum siang)" },
+  { hangul: "오후", roman: "ohu", indonesian: "siang/sore (PM)" },
+  { hangul: "아침", roman: "achim", indonesian: "pagi" },
+  { hangul: "점심", roman: "jeomsim", indonesian: "siang / makan siang" },
+  { hangul: "저녁", roman: "jeonyeok", indonesian: "petang / makan malam" },
+  { hangul: "밤", roman: "bam", indonesian: "malam" },
+  { hangul: "새벽", roman: "saebyeok", indonesian: "dini hari / subuh" },
+  { hangul: "정오", roman: "jeongo", indonesian: "tengah hari" },
+  { hangul: "자정", roman: "jajeong", indonesian: "tengah malam" },
+  { hangul: "지금", roman: "jigeum", indonesian: "sekarang" },
+  { hangul: "나중에", roman: "najunge", indonesian: "nanti" },
+  { hangul: "방금", roman: "banggeum", indonesian: "baru saja / barusan" },
+  { hangul: "곧", roman: "got", indonesian: "segera" },
+  { hangul: "일찍", roman: "iljjik", indonesian: "awal / pagi-pagi" },
+  { hangul: "늦게", roman: "neutge", indonesian: "terlambat / larut" },
+  { hangul: "빨리", roman: "ppalli", indonesian: "cepat" },
+  { hangul: "천천히", roman: "cheoncheonhi", indonesian: "perlahan" },
+  { hangul: "항상", roman: "hangsang", indonesian: "selalu" },
+  { hangul: "자주", roman: "jaju", indonesian: "sering" },
+  { hangul: "가끔", roman: "gakkeum", indonesian: "kadang-kadang" }
 ] as const;
 
 const PLACES: readonly VocabItem[] = [
@@ -217,6 +312,10 @@ export function getVocabList(category: VocabCategory): readonly VocabItem[] {
   switch (category) {
     case "expressions":
       return EXPRESSIONS;
+    case "days":
+      return DAYS;
+    case "time":
+      return TIMES;
     case "places":
       return PLACES;
     case "numbers":
