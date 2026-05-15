@@ -5,6 +5,7 @@ import type { Prompt } from "@/lib/levels";
 import { createPrompt, formatRomanHint, getLevelConfig, isCorrectAnswer } from "@/lib/levels";
 import type { LevelNumber, StoredProgress } from "@/lib/storage";
 import { clearProgress, defaultProgress, loadProgress, saveProgress } from "@/lib/storage";
+import { isSpeechSupported, primeVoices, speakKorean, stopSpeaking } from "@/lib/tts";
 import LevelPicker from "@/components/LevelPicker";
 
 type Feedback =
@@ -27,6 +28,7 @@ export default function Game() {
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState<Feedback>({ kind: "idle" });
   const [showHint, setShowHint] = useState(false);
+  const [ttsSupported, setTtsSupported] = useState(true);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -37,6 +39,9 @@ export default function Game() {
       setPrompt(createPrompt(stored.level));
     }
     setHydrated(true);
+    setTtsSupported(isSpeechSupported());
+    primeVoices();
+    return () => stopSpeaking();
   }, []);
 
   useEffect(() => {
@@ -180,6 +185,16 @@ export default function Game() {
 
           <button className="btn" type="button" onClick={() => setShowHint((s) => !s)}>
             {showHint ? "Hide hint" : "Hint"}
+          </button>
+
+          <button
+            className="btn btnSpeak"
+            type="button"
+            onClick={() => speakKorean(prompt.hangul)}
+            disabled={!ttsSupported}
+            title={ttsSupported ? "Dengarkan pelafalan" : "TTS tidak didukung di browser ini"}
+          >
+            🔊 Dengarkan
           </button>
 
           {level < 4 ? (
