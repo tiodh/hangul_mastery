@@ -6,6 +6,7 @@ import VocabPractice from "@/components/VocabPractice";
 import SentencePractice from "@/components/SentencePractice";
 import { VOCAB_CATEGORIES, type VocabCategory } from "@/lib/vocabulary";
 import { SENTENCE_PATTERNS, type SentencePatternId } from "@/lib/sentences";
+import { UI, useLanguage, type Loc } from "@/lib/i18n";
 
 type Section = "basics" | "sentences";
 
@@ -13,17 +14,17 @@ type BasicsKey = "hangul" | VocabCategory;
 
 type BasicsItem = {
   key: BasicsKey;
-  label: string;
+  label: Loc;
   emoji: string;
-  description: string;
+  description: Loc;
 };
 
 const BASICS_MENU: readonly BasicsItem[] = [
   {
     key: "hangul",
-    label: "Hangul Dasar",
+    label: UI.hangulLabel,
     emoji: "가",
-    description: "Latihan membaca aksara Hangul (romanisasi)"
+    description: UI.hangulDesc
   },
   ...VOCAB_CATEGORIES.map((c) => ({
     key: c.id,
@@ -68,6 +69,7 @@ function buildHash(section: Section, basicsKey: BasicsKey, patternKey: SentenceP
 }
 
 export default function AppShell() {
+  const lang = useLanguage();
   const [section, setSection] = useState<Section>("basics");
   const [basicsKey, setBasicsKey] = useState<BasicsKey>("hangul");
   const [patternKey, setPatternKey] = useState<SentencePatternId>(SENTENCE_PATTERNS[0]!.id);
@@ -97,14 +99,14 @@ export default function AppShell() {
 
   return (
     <>
-      <nav className="sectionTabs" aria-label="Kategori utama">
+      <nav className="sectionTabs" aria-label={UI.basics[lang]}>
         <button
           type="button"
           className={`sectionTab ${section === "basics" ? "sectionTabActive" : ""}`}
           onClick={() => setSection("basics")}
         >
           <span className="sectionTabEmoji">📚</span>
-          <span>Kata Dasar</span>
+          <span>{UI.basics[lang]}</span>
         </button>
         <button
           type="button"
@@ -112,13 +114,13 @@ export default function AppShell() {
           onClick={() => setSection("sentences")}
         >
           <span className="sectionTabEmoji">💬</span>
-          <span>Bentuk Kalimat</span>
+          <span>{UI.sentences[lang]}</span>
         </button>
       </nav>
 
       {section === "basics" ? (
         <>
-          <nav className="menuBar" aria-label="Menu kata dasar">
+          <nav className="menuBar" aria-label={UI.basics[lang]}>
             {BASICS_MENU.map((m) => {
               const isActive = m.key === basicsKey;
               return (
@@ -127,10 +129,10 @@ export default function AppShell() {
                   type="button"
                   className={`menuBtn ${isActive ? "menuBtnActive" : ""}`}
                   onClick={() => setBasicsKey(m.key)}
-                  title={m.description}
+                  title={m.description[lang]}
                 >
                   <span className="menuBtnEmoji" aria-hidden>{m.emoji}</span>
-                  <span>{m.label}</span>
+                  <span>{m.label[lang]}</span>
                 </button>
               );
             })}
@@ -139,7 +141,7 @@ export default function AppShell() {
         </>
       ) : (
         <>
-          <nav className="menuBar" aria-label="Menu bentuk kalimat">
+          <nav className="menuBar" aria-label={UI.sentences[lang]}>
             {SENTENCE_PATTERNS.map((p) => {
               const isActive = p.id === patternKey;
               return (
@@ -148,10 +150,10 @@ export default function AppShell() {
                   type="button"
                   className={`menuBtn ${isActive ? "menuBtnActive" : ""}`}
                   onClick={() => setPatternKey(p.id)}
-                  title={p.description}
+                  title={p.description[lang]}
                 >
                   <span className="menuBtnEmoji" aria-hidden>{p.emoji}</span>
-                  <span>{p.label}</span>
+                  <span>{p.label[lang]}</span>
                 </button>
               );
             })}

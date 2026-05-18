@@ -7,6 +7,7 @@ import type { LevelNumber, StoredProgress } from "@/lib/storage";
 import { clearProgress, defaultProgress, loadProgress, saveProgress } from "@/lib/storage";
 import { isSpeechSupported, primeVoices, speakKorean, stopSpeaking } from "@/lib/tts";
 import { HANGUL_GREETINGS } from "@/lib/greetings";
+import { UI, useLanguage } from "@/lib/i18n";
 import LevelPicker from "@/components/LevelPicker";
 import ExampleList from "@/components/ExampleList";
 
@@ -23,6 +24,7 @@ function clampLevel(level: number): LevelNumber {
 }
 
 export default function Game() {
+  const lang = useLanguage();
   const [hydrated, setHydrated] = useState(false);
   const [progress, setProgress] = useState<StoredProgress>(() => defaultProgress(1));
   const [level, setLevel] = useState<LevelNumber>(1);
@@ -123,17 +125,17 @@ export default function Game() {
         <div className="row" style={{ justifyContent: "space-between" }}>
           <div className="row">
             <span className="tag">
-              <span style={{ fontWeight: 800 }}>Level</span> <span>{level}</span>
+              <span style={{ fontWeight: 800 }}>{UI.level[lang]}</span> <span>{level}</span>
             </span>
             <span className="tag">
-              <span style={{ fontWeight: 800 }}>Streak</span> <span>{progress.streak}</span>
+              <span style={{ fontWeight: 800 }}>{UI.streak[lang]}</span> <span>{progress.streak}</span>
             </span>
             <span className="tag">
-              <span style={{ fontWeight: 800 }}>Accuracy</span> <span>{correctRate}%</span>
+              <span style={{ fontWeight: 800 }}>{UI.accuracy[lang]}</span> <span>{correctRate}%</span>
             </span>
           </div>
           <button className="btn btnDanger" type="button" onClick={resetAll}>
-            Reset
+            {UI.reset[lang]}
           </button>
         </div>
 
@@ -142,7 +144,7 @@ export default function Game() {
             <div className="progressFill" style={{ width: `${progressPct}%` }} />
           </div>
           <div className="small" style={{ marginTop: 8 }}>
-            {cfg.label}: type the romanization (spaces/hyphens are OK).
+            {cfg.label}{UI.typePronunciation[lang]}
           </div>
         </div>
 
@@ -150,9 +152,7 @@ export default function Game() {
           {prompt.hangul}
         </div>
 
-        <p className="hint">
-          Tip: If you are not sure, click <b>Hint</b> to see syllable-by-syllable romanization.
-        </p>
+        <p className="hint">{UI.hintTip[lang]}</p>
 
         <div className="row">
           <input
@@ -166,7 +166,7 @@ export default function Game() {
                 else nextQuestion();
               }
             }}
-            placeholder="Type pronunciation (romanization)…"
+            placeholder={UI.pronunciationPrompt[lang]}
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
@@ -177,16 +177,16 @@ export default function Game() {
         <div className="row" style={{ marginTop: 10 }}>
           {feedback.kind === "idle" ? (
             <button className="btn btnPrimary" type="button" onClick={submit} disabled={!answer.trim()}>
-              Check
+              {UI.check[lang]}
             </button>
           ) : (
             <button className="btn btnGood" type="button" onClick={nextQuestion}>
-              Next
+              {UI.next[lang]}
             </button>
           )}
 
           <button className="btn" type="button" onClick={() => setShowHint((s) => !s)}>
-            {showHint ? "Hide hint" : "Hint"}
+            {showHint ? UI.hideHint[lang] : UI.hint[lang]}
           </button>
 
           <button
@@ -194,21 +194,21 @@ export default function Game() {
             type="button"
             onClick={() => speakKorean(prompt.hangul)}
             disabled={!ttsSupported}
-            title={ttsSupported ? "Dengarkan pelafalan" : "TTS tidak didukung di browser ini"}
+            title={ttsSupported ? UI.listenTitle[lang] : UI.ttsUnsupported[lang]}
           >
-            🔊 Dengarkan
+            {UI.listen[lang]}
           </button>
 
           {level < 4 ? (
             <button className="btn" type="button" onClick={() => setLevel(clampLevel(level + 1))}>
-              Next level →
+              {UI.nextLevel[lang]}
             </button>
           ) : null}
         </div>
 
         {showHint ? (
           <div className="feedback">
-            <div className="small">Hint (syllables):</div>
+            <div className="small">{UI.hintLabel[lang]}</div>
             <div style={{ marginTop: 4, fontWeight: 800 }}>{formatRomanHint(prompt)}</div>
           </div>
         ) : null}
@@ -217,11 +217,11 @@ export default function Game() {
           <div className="feedback" role="status" aria-live="polite">
             {feedback.kind === "correct" ? (
               <div className="good">
-                Correct! <span className="small">(expected: {feedback.expected})</span>
+                {UI.correctExcl[lang]} <span className="small">({UI.expectedLabel[lang]}: {feedback.expected})</span>
               </div>
             ) : (
               <div className="bad">
-                Not yet. <span className="small">(expected: {feedback.expected})</span>
+                {UI.notYetShort[lang]} <span className="small">({UI.expectedLabel[lang]}: {feedback.expected})</span>
               </div>
             )}
           </div>
@@ -236,17 +236,15 @@ export default function Game() {
         />
 
         <div className="card">
-          <div style={{ fontWeight: 800, marginBottom: 6 }}>Cara penilaian</div>
-          <div className="small">
-            Setiap klik <b>Check</b> dihitung 1 percobaan. Jawaban benar menambah streak dan progres tersimpan otomatis di browser.
-          </div>
+          <div style={{ fontWeight: 800, marginBottom: 6 }}>{UI.scoringTitle[lang]}</div>
+          <div className="small">{UI.scoringDesc[lang]}</div>
         </div>
 
         <div className="card">
           <ExampleList
             examples={HANGUL_GREETINGS}
             ttsSupported={ttsSupported}
-            title="Sapaan & Perkenalan Dasar"
+            title={UI.greetingsTitle[lang]}
           />
         </div>
       </aside>

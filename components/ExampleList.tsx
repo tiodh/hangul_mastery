@@ -2,21 +2,25 @@
 
 import { EXAMPLE_KIND_LABEL, type ExampleKind, type SentenceExample } from "@/lib/sentences";
 import { speakKorean } from "@/lib/tts";
+import { UI, useLanguage } from "@/lib/i18n";
 
 const ORDER: readonly ExampleKind[] = ["statement", "question", "positive", "negative"];
 
 export default function ExampleList({
   examples,
   ttsSupported,
-  title = "Contoh Kalimat"
+  title
 }: {
   examples: readonly SentenceExample[];
   ttsSupported: boolean;
   title?: string;
 }) {
+  const lang = useLanguage();
+  const heading = title ?? UI.exampleSentencesTitle[lang];
+
   return (
     <div>
-      <div style={{ fontWeight: 800, marginBottom: 8 }}>{title}</div>
+      <div style={{ fontWeight: 800, marginBottom: 8 }}>{heading}</div>
       <div style={{ display: "grid", gap: 12 }}>
         {ORDER.map((kind) => {
           const items = examples.filter((e) => e.kind === kind);
@@ -26,7 +30,7 @@ export default function ExampleList({
             <div key={kind} className={`exampleGroup exampleGroup-${kind}`}>
               <div className={`exampleGroupHeader exampleGroupHeader-${kind}`}>
                 <span>{meta.emoji}</span>
-                <span>{meta.label}</span>
+                <span>{meta.label[lang]}</span>
               </div>
               <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
                 {items.map((ex, i) => (
@@ -38,16 +42,16 @@ export default function ExampleList({
                         className="btn btnSpeak"
                         onClick={() => speakKorean(ex.korean)}
                         disabled={!ttsSupported}
-                        aria-label={`Dengarkan: ${ex.korean}`}
+                        aria-label={`${UI.listen[lang]}: ${ex.korean}`}
                       >
                         🔊
                       </button>
                     </div>
                     <div className="romanLine">[{ex.roman}]</div>
-                    <div className="small" style={{ marginTop: 4 }}>{ex.indonesian}</div>
+                    <div className="small" style={{ marginTop: 4 }}>{ex.meaning[lang]}</div>
                     {ex.note ? (
                       <div className="small" style={{ marginTop: 4, fontStyle: "italic", opacity: 0.85 }}>
-                        💡 {ex.note}
+                        💡 {ex.note[lang]}
                       </div>
                     ) : null}
                   </div>

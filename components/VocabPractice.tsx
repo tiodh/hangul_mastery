@@ -4,12 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   getCategoryConfig,
   getVocabList,
-  isCorrectIndonesian,
+  isCorrectMeaning,
   pickRandomItem,
   type VocabCategory,
   type VocabItem
 } from "@/lib/vocabulary";
 import { isSpeechSupported, primeVoices, speakKorean, stopSpeaking } from "@/lib/tts";
+import { UI, useLanguage } from "@/lib/i18n";
 import ExampleList from "@/components/ExampleList";
 
 type Mode = "flashcard" | "quiz";
@@ -20,6 +21,7 @@ type Feedback =
   | { kind: "wrong"; expected: string };
 
 export default function VocabPractice({ category }: { category: VocabCategory }) {
+  const lang = useLanguage();
   const cfg = useMemo(() => getCategoryConfig(category), [category]);
   const list = useMemo(() => getVocabList(category), [category]);
 
@@ -64,8 +66,9 @@ export default function VocabPractice({ category }: { category: VocabCategory })
   }
 
   function handleCheck() {
-    const correct = isCorrectIndonesian(answer, item);
-    setFeedback(correct ? { kind: "correct", expected: item.indonesian } : { kind: "wrong", expected: item.indonesian });
+    const correct = isCorrectMeaning(answer, item, lang);
+    const expected = item.meaning[lang];
+    setFeedback(correct ? { kind: "correct", expected } : { kind: "wrong", expected });
     setStats((s) => ({
       correct: s.correct + (correct ? 1 : 0),
       attempts: s.attempts + 1
@@ -76,167 +79,167 @@ export default function VocabPractice({ category }: { category: VocabCategory })
 
   return (
     <section className="card">
-        <div className="row" style={{ justifyContent: "space-between" }}>
-          <div className="row">
+      <div className="row" style={{ justifyContent: "space-between" }}>
+        <div className="row">
+          <span className="tag">
+            <span style={{ fontWeight: 800 }}>{cfg.emoji}</span>
+            <span>{cfg.label[lang]}</span>
+          </span>
+          <span className="tag">
+            <span style={{ fontWeight: 800 }}>{UI.totalWords[lang]}</span>
+            <span>{list.length}</span>
+          </span>
+          {mode === "quiz" ? (
             <span className="tag">
-              <span style={{ fontWeight: 800 }}>{cfg.emoji}</span>
-              <span>{cfg.label}</span>
+              <span style={{ fontWeight: 800 }}>{UI.accuracy[lang]}</span>
+              <span>{accuracy}%</span>
             </span>
-            <span className="tag">
-              <span style={{ fontWeight: 800 }}>Total kata</span>
-              <span>{list.length}</span>
-            </span>
-            {mode === "quiz" ? (
-              <span className="tag">
-                <span style={{ fontWeight: 800 }}>Akurasi</span>
-                <span>{accuracy}%</span>
-              </span>
-            ) : null}
-          </div>
-          <div className="row">
-            <button
-              type="button"
-              className={`btn ${mode === "flashcard" ? "btnPrimary" : ""}`}
-              onClick={() => setMode("flashcard")}
-            >
-              Kartu
-            </button>
-            <button
-              type="button"
-              className={`btn ${mode === "quiz" ? "btnPrimary" : ""}`}
-              onClick={() => setMode("quiz")}
-            >
-              Kuis
-            </button>
-          </div>
+          ) : null}
         </div>
-
-        <div className="small" style={{ marginTop: 10 }}>{cfg.description}</div>
-
-        <div className="hangul" aria-label="kata korea">
-          {item.hangul}
-        </div>
-
-        <div className="row" style={{ marginBottom: 8 }}>
+        <div className="row">
           <button
             type="button"
-            className="btn btnSpeak"
-            onClick={handleSpeak}
-            disabled={!ttsSupported}
-            title={ttsSupported ? "Dengarkan pelafalan" : "TTS tidak didukung di browser ini"}
+            className={`btn ${mode === "flashcard" ? "btnPrimary" : ""}`}
+            onClick={() => setMode("flashcard")}
           >
-            🔊 Dengarkan
+            {UI.cards[lang]}
           </button>
-          <span className="small">Romanisasi: <b>{item.roman}</b></span>
+          <button
+            type="button"
+            className={`btn ${mode === "quiz" ? "btnPrimary" : ""}`}
+            onClick={() => setMode("quiz")}
+          >
+            {UI.quiz[lang]}
+          </button>
         </div>
+      </div>
 
-        {mode === "flashcard" ? (
-          <div className="feedback">
-            {revealed ? (
-              <div>
-                <div className="small">Arti (Bahasa Indonesia):</div>
-                <div style={{ marginTop: 4, fontWeight: 800, fontSize: 20 }}>{item.indonesian}</div>
-              </div>
-            ) : (
-              <div className="small">Tebak dulu artinya, lalu klik <b>Tampilkan arti</b>.</div>
-            )}
-            <div className="row" style={{ marginTop: 12 }}>
+      <div className="small" style={{ marginTop: 10 }}>{cfg.description[lang]}</div>
+
+      <div className="hangul" aria-label="kata korea">
+        {item.hangul}
+      </div>
+
+      <div className="row" style={{ marginBottom: 8 }}>
+        <button
+          type="button"
+          className="btn btnSpeak"
+          onClick={handleSpeak}
+          disabled={!ttsSupported}
+          title={ttsSupported ? UI.listenTitle[lang] : UI.ttsUnsupported[lang]}
+        >
+          {UI.listen[lang]}
+        </button>
+        <span className="small">{UI.reading[lang]}: <b>{item.roman}</b></span>
+      </div>
+
+      {mode === "flashcard" ? (
+        <div className="feedback">
+          {revealed ? (
+            <div>
+              <div className="small">{UI.meaning[lang]}:</div>
+              <div style={{ marginTop: 4, fontWeight: 800, fontSize: 20 }}>{item.meaning[lang]}</div>
+            </div>
+          ) : (
+            <div className="small">
+              {lang === "id"
+                ? <>Tebak dulu artinya, lalu klik <b>{UI.showMeaning.id}</b>.</>
+                : <>Try to guess the meaning, then click <b>{UI.showMeaning.en}</b>.</>}
+            </div>
+          )}
+          <div className="row" style={{ marginTop: 12 }}>
+            <button
+              type="button"
+              className="btn btnPrimary"
+              onClick={() => setRevealed((r) => !r)}
+            >
+              {revealed ? UI.hideMeaning[lang] : UI.showMeaning[lang]}
+            </button>
+            <button type="button" className="btn btnGood" onClick={nextItem}>
+              {UI.nextWord[lang]}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <p className="hint">{UI.vocabQuizPrompt[lang]}</p>
+          <div className="row">
+            <input
+              ref={inputRef}
+              type="text"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  if (feedback.kind === "idle") handleCheck();
+                  else nextItem();
+                }
+              }}
+              placeholder={UI.typeMeaning[lang]}
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+            />
+          </div>
+
+          <div className="row" style={{ marginTop: 10 }}>
+            {feedback.kind === "idle" ? (
               <button
                 type="button"
                 className="btn btnPrimary"
-                onClick={() => setRevealed((r) => !r)}
+                onClick={handleCheck}
+                disabled={!answer.trim()}
               >
-                {revealed ? "Sembunyikan" : "Tampilkan arti"}
+                {UI.check[lang]}
               </button>
+            ) : (
               <button type="button" className="btn btnGood" onClick={nextItem}>
-                Kata berikutnya →
+                {UI.next[lang]}
               </button>
-            </div>
+            )}
+            <button type="button" className="btn" onClick={() => setRevealed((r) => !r)}>
+              {revealed ? UI.hideAnswerMeaning[lang] : UI.seeMeaning[lang]}
+            </button>
           </div>
-        ) : (
-          <>
-            <p className="hint">Ketik arti kata Korea di atas dalam Bahasa Indonesia.</p>
-            <div className="row">
-              <input
-                ref={inputRef}
-                type="text"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    if (feedback.kind === "idle") handleCheck();
-                    else nextItem();
-                  }
-                }}
-                placeholder="Ketik arti dalam Bahasa Indonesia…"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
-              />
-            </div>
 
-            <div className="row" style={{ marginTop: 10 }}>
-              {feedback.kind === "idle" ? (
-                <button
-                  type="button"
-                  className="btn btnPrimary"
-                  onClick={handleCheck}
-                  disabled={!answer.trim()}
-                >
-                  Periksa
-                </button>
+          {revealed ? (
+            <div className="feedback">
+              <div className="small">{UI.meaning[lang]}:</div>
+              <div style={{ marginTop: 4, fontWeight: 800 }}>{item.meaning[lang]}</div>
+            </div>
+          ) : null}
+
+          {feedback.kind !== "idle" ? (
+            <div className="feedback" role="status" aria-live="polite">
+              {feedback.kind === "correct" ? (
+                <div className="good">
+                  {UI.correctExcl[lang]} <span className="small">({UI.answerLabel[lang]}: {feedback.expected})</span>
+                </div>
               ) : (
-                <button type="button" className="btn btnGood" onClick={nextItem}>
-                  Lanjut →
-                </button>
+                <div className="bad">
+                  {UI.notYet[lang]} <span className="small">({UI.answerLabel[lang]}: {feedback.expected})</span>
+                </div>
               )}
-              <button type="button" className="btn" onClick={() => setRevealed((r) => !r)}>
-                {revealed ? "Sembunyikan arti" : "Lihat arti"}
-              </button>
             </div>
+          ) : null}
+        </>
+      )}
 
-            {revealed ? (
-              <div className="feedback">
-                <div className="small">Arti:</div>
-                <div style={{ marginTop: 4, fontWeight: 800 }}>{item.indonesian}</div>
-              </div>
-            ) : null}
+      {!ttsSupported ? (
+        <div className="small" style={{ marginTop: 12 }}>{UI.ttsWarning[lang]}</div>
+      ) : null}
 
-            {feedback.kind !== "idle" ? (
-              <div className="feedback" role="status" aria-live="polite">
-                {feedback.kind === "correct" ? (
-                  <div className="good">
-                    Benar! <span className="small">(jawaban: {feedback.expected})</span>
-                  </div>
-                ) : (
-                  <div className="bad">
-                    Belum tepat. <span className="small">(jawaban: {feedback.expected})</span>
-                  </div>
-                )}
-              </div>
-            ) : null}
-          </>
-        )}
+      <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
+        <ExampleList examples={cfg.usageExamples} ttsSupported={ttsSupported} title={UI.usageExamplesTitle[lang]} />
+      </div>
 
-        {!ttsSupported ? (
-          <div className="small" style={{ marginTop: 12 }}>
-            ⚠️ Browser Anda tidak mendukung text-to-speech. Coba gunakan Chrome, Edge, atau Safari terbaru.
-          </div>
-        ) : null}
-
-        <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
-          <ExampleList examples={cfg.usageExamples} ttsSupported={ttsSupported} title="Contoh Kalimat Penggunaan" />
+      {mode === "quiz" ? (
+        <div className="tipsInline">
+          <b>{UI.sessionPrefix[lang]}</b> {stats.correct}/{stats.attempts} ({accuracy}%) — {UI.statsHint[lang]}
         </div>
-
-        {mode === "quiz" ? (
-          <div className="tipsInline">
-            <b>📊 Sesi:</b> {stats.correct}/{stats.attempts} benar ({accuracy}%) — statistik tidak disimpan antar sesi.
-          </div>
-        ) : (
-          <div className="tipsInline">
-            <b>💡 Tips:</b> Klik 🔊 sambil mengucap ulang. Mode <b>Kartu</b> untuk tebak arti, mode <b>Kuis</b> untuk ketik arti dalam Bahasa Indonesia (Enter = cek).
-          </div>
-        )}
-      </section>
+      ) : (
+        <div className="tipsInline">{UI.tipsVocab[lang]}</div>
+      )}
+    </section>
   );
 }
