@@ -10,10 +10,11 @@ import {
   type VocabItem
 } from "@/lib/vocabulary";
 import { isSpeechSupported, primeVoices, speakKorean, stopSpeaking } from "@/lib/tts";
+import { comparePronunciation, useSpeechRecognition } from "@/lib/stt";
 import { UI, useLanguage } from "@/lib/i18n";
 import ExampleList from "@/components/ExampleList";
 
-type Mode = "flashcard" | "quiz";
+type Mode = "flashcard" | "quiz" | "speak";
 
 type Feedback =
   | { kind: "idle" }
@@ -33,6 +34,7 @@ export default function VocabPractice({ category }: { category: VocabCategory })
   const [stats, setStats] = useState({ correct: 0, attempts: 0 });
   const [ttsSupported, setTtsSupported] = useState(true);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const stt = useSpeechRecognition({ lang: "ko-KR" });
 
   useEffect(() => {
     setTtsSupported(isSpeechSupported());
@@ -59,6 +61,7 @@ export default function VocabPractice({ category }: { category: VocabCategory })
     setRevealed(false);
     setAnswer("");
     setFeedback({ kind: "idle" });
+    stt.reset();
   }
 
   function handleSpeak() {
@@ -111,6 +114,15 @@ export default function VocabPractice({ category }: { category: VocabCategory })
           >
             {UI.quiz[lang]}
           </button>
+          <button
+            type="button"
+            className={`btn ${mode === "speak" ? "btnPrimary" : ""}`}
+            onClick={() => setMode("speak")}
+            disabled={!stt.supported}
+            title={stt.supported ? "" : UI.sttUnsupported[lang]}
+          >
+            🎤 {UI.speak[lang]}
+          </button>
         </div>
       </div>
 
@@ -142,9 +154,13 @@ export default function VocabPractice({ category }: { category: VocabCategory })
             </div>
           ) : (
             <div className="small">
-              {lang === "id"
-                ? <>Tebak dulu artinya, lalu klik <b>{UI.showMeaning.id}</b>.</>
-                : <>Try to guess the meaning, then click <b>{UI.showMeaning.en}</b>.</>}
+              {lang === "id" ? (
+                <>Tebak dulu artinya, lalu klik <b>{UI.showMeaning.id}</b>.</>
+              ) : lang === "hi" ? (
+                <>पहले अर्थ का अनुमान लगाएं, फिर <b>{UI.showMeaning.hi}</b> पर क्लिक करें।</>
+              ) : (
+                <>Try to guess the meaning, then click <b>{UI.showMeaning.en}</b>.</>
+              )}
             </div>
           )}
           <div className="row" style={{ marginTop: 12 }}>
@@ -160,6 +176,13 @@ export default function VocabPractice({ category }: { category: VocabCategory })
             </button>
           </div>
         </div>
+      ) : mode === "speak" ? (
+        <SpeakMode
+          item={item}
+          stt={stt}
+          lang={lang}
+          onNext={nextItem}
+        />
       ) : (
         <>
           <p className="hint">{UI.vocabQuizPrompt[lang]}</p>
@@ -237,9 +260,106 @@ export default function VocabPractice({ category }: { category: VocabCategory })
         <div className="tipsInline">
           <b>{UI.sessionPrefix[lang]}</b> {stats.correct}/{stats.attempts} ({accuracy}%) — {UI.statsHint[lang]}
         </div>
+      ) : mode === "speak" ? (
+        <div className="tipsInline">{UI.speakTip[lang]}</div>
       ) : (
         <div className="tipsInline">{UI.tipsVocab[lang]}</div>
       )}
     </section>
+  );
+}
+
+function SpeakMode({
+  item,
+  stt,
+  lang,
+  onNext
+}: {
+  item: VocabItem;
+  stt: ReturnType<typeof useSpeechRecognition>;
+  lang: "id" | "en" | "hi";
+  onNext: () => void;
+}) {
+  const result =
+    stt.state === "result" && stt.transcript
+      ? comparePronunciation(stt.transcript, item.hangul)
+      : null;
+
+  const verdictText =
+    result?.verdict === "match"
+      ? UI.verdictMatch[lang]
+      : result?.verdict === "close"
+      ? UI.verdictClose[lang]
+      : result
+      ? UI.verdictMiss[lang]
+      : "";
+
+  const verdictClass =
+    result?.verdict === "match"
+      ? "good"
+      : result?.verdict === "miss"
+      ? "bad"
+      : "";
+
+  return (
+    <div className="feedback">
+      {!stt.supported ? (
+        <div className="bad small">{UI.sttUnsupported[lang]}</div>
+      ) : (
+        <>
+          <p className="hint" style={{ margin: 0 }}>{UI.speakPrompt[lang]}</p>
+
+          <div className="row" style={{ marginTop: 12 }}>
+            {stt.state === "listening" ? (
+              <button type="button" className="btn btnDanger" onClick={stt.stop}>
+                {UI.speakListening[lang]}
+              </button>
+            ) : (
+              <button type="button" className="btn btnPrimary" onClick={stt.start}>
+                {result ? UI.speakAgain[lang] : UI.speakStart[lang]}
+              </button>
+            )}
+            <button type="button" className="btn btnGood" onClick={onNext}>
+              {UI.nextWord[lang]}
+            </button>
+          </div>
+
+          {stt.error ? (
+            <div className="small bad" style={{ marginTop: 10 }}>
+              {stt.error === "not-allowed" || stt.error === "service-not-allowed"
+                ? UI.sttPermissionError[lang]
+                : stt.error}
+            </div>
+          ) : null}
+
+          {result ? (
+            <div className="feedback" role="status" aria-live="polite">
+              <div className="small">{UI.youSaid[lang]}</div>
+              <div className="exampleKorean" style={{ marginTop: 4 }}>
+                {stt.transcript}
+              </div>
+              <div className="row" style={{ marginTop: 8 }}>
+                <span className="tag">
+                  <span style={{ fontWeight: 800 }}>{UI.scoreLabel[lang]}</span>
+                  <span>{Math.round(result.score * 100)}%</span>
+                </span>
+                {stt.confidence > 0 ? (
+                  <span className="small" style={{ opacity: 0.7 }}>
+                    (confidence {Math.round(stt.confidence * 100)}%)
+                  </span>
+                ) : null}
+              </div>
+              <div className={verdictClass} style={{ marginTop: 8, fontWeight: 700 }}>
+                {verdictText}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="small" style={{ marginTop: 10, opacity: 0.75 }}>
+            {UI.sttPrivacy[lang]}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
